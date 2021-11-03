@@ -13,7 +13,16 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ nasm ];
 
-  makeFlags = [ "PREFIX=${placeholder "out"}" ];
+  makeFlags = [
+    "PREFIX=${placeholder "out"}"
+  ]
+  ++ lib.optional (stdenv.hostPlatform != stdenv.buildPlatform)
+    "ARCH=${(
+      if stdenv.hostPlatform.gcc ? arch
+      then stdenv.hostPlatform.gcc.arch
+      else stdenv.hostPlatform.parsed.cpu.name
+    )}"
+  ;
 
   meta = with lib; {
     description = "A codec library which supports H.264 encoding and decoding";
