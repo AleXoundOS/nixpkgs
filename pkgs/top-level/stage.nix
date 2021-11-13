@@ -241,6 +241,7 @@ let
           }.${stdenv.hostPlatform.parsed.abi.name}
             or lib.systems.parse.abis.musl;
         };
+        gcc = stdenv.hostPlatform.gcc;
       } // lib.optionalAttrs (stdenv.hostPlatform.system == "powerpc64-linux") {
         gcc.abi = "elfv2";
       };
