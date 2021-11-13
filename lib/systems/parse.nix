@@ -345,10 +345,12 @@ rec {
       ];
     };
     gnuabi64     = { abi = "64"; };
+    gnuabin32    = { abi = "n32"; };
 
     musleabi     = { float = "soft"; };
     musleabihf   = { float = "hard"; };
     musl         = {};
+    muslabin32   = { abi = "n32"; };
 
     uclibceabihf = { float = "soft"; };
     uclibceabi   = { float = "hard"; };

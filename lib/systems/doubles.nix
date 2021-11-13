@@ -26,8 +26,9 @@ let
 
     # Linux
     "aarch64-linux" "armv5tel-linux" "armv6l-linux" "armv7a-linux"
-    "armv7l-linux" "i686-linux" "mipsel-linux" "powerpc64-linux"
-    "powerpc64le-linux" "riscv32-linux" "riscv64-linux" "x86_64-linux"
+    "armv7l-linux" "i686-linux" "mips64el-linux" "mipsel-linux"
+    "powerpc64-linux" "powerpc64le-linux" "riscv32-linux" "riscv64-linux"
+    "x86_64-linux"
 
     # MMIXware
     "mmix-mmixware"

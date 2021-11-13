@@ -90,7 +90,7 @@ rec {
   } // platforms.ben_nanonote;
 
   fuloongminipc = {
-    config = "mipsel-unknown-linux-gnu";
+    config = "mips64el-unknown-linux-gnu";
   } // platforms.fuloong2f_n32;
 
   muslpi = raspberryPi // {
