@@ -1,14 +1,16 @@
-{ lib, fetchPypi, buildPythonPackage
+{ lib, fetchFromGitHub, buildPythonPackage
 , flake8
 , mock, pep8, pytest }:
 
 buildPythonPackage rec {
   pname = "flake8-polyfill";
-  version = "1.0.2";
+  version = "2021-11-23";
 
-  src = fetchPypi {
-    inherit pname version;
-    sha256 = "1nlf1mkqw856vi6782qcglqhaacb23khk9wkcgn55npnjxshhjz4";
+  src = fetchFromGitHub {
+    owner = "PyCQA";
+    repo = pname;
+    rev = "c938da9174c57ea39681523fae0b150aba77da76";
+    sha256 = "0afpyhid69w0wscbz6qwcqwlyl3f73grfvapksp7w9ri1sb6ynng";
   };
 
   postPatch = ''
@@ -32,7 +34,7 @@ buildPythonPackage rec {
   '';
 
   meta = with lib; {
-    homepage = "https://gitlab.com/pycqa/flake8-polyfill";
+    homepage = "https://github.com/PyCQA/flake8-polyfill";
     description = "Polyfill package for Flake8 plugins";
     license = licenses.mit;
     maintainers = with maintainers; [ eadwu ];
