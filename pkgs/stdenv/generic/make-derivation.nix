@@ -295,6 +295,7 @@ else let
           else if isAarch64 then "aarch64"
           else if isx86_32  then "x86"
           else if isx86_64  then "x86_64"
+          else if (isMips && is32bit) then "mips"
           else platform.parsed.cpu.family + builtins.toString platform.parsed.cpu.bits;
         crossFile = builtins.toFile "cross-file.conf" ''
           [properties]
