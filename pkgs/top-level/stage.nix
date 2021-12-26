@@ -239,16 +239,7 @@ let
     } // lib.optionalAttrs stdenv.hostPlatform.isLinux {
       crossSystem = {
         isStatic = true;
-        parsed = stdenv.hostPlatform.parsed // {
-          abi = {
-            gnu = lib.systems.parse.abis.musl;
-            gnueabi = lib.systems.parse.abis.musleabi;
-            gnueabihf = lib.systems.parse.abis.musleabihf;
-            musleabi = lib.systems.parse.abis.musleabi;
-            musleabihf = lib.systems.parse.abis.musleabihf;
-          }.${stdenv.hostPlatform.parsed.abi.name}
-            or lib.systems.parse.abis.musl;
-        };
+        parsed = stdenv.hostPlatform.parsed;
         gcc = stdenv.hostPlatform.gcc;
       } // lib.optionalAttrs (stdenv.hostPlatform.system == "powerpc64-linux") {
         gcc.abi = "elfv2";
