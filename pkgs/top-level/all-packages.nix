@@ -3425,6 +3425,8 @@ with pkgs;
 
   dbus-broker = callPackage ../os-specific/linux/dbus-broker { };
 
+  evhz = callPackage ../os-specific/linux/evhz { };
+
   ioport = callPackage ../os-specific/linux/ioport {};
 
   dgoss = callPackage ../tools/misc/dgoss { };
