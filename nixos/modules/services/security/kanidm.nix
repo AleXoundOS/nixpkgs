@@ -628,17 +628,6 @@ in
           acc: { type, name }: acc // { ${name} = (acc.${name} or [ ]) ++ [ type ]; }
         ) { } entities;
 
-        assertGroupsKnown =
-          opt: groups:
-          let
-            knownGroups = attrNames (filterPresent cfg.provision.groups);
-            unknownGroups = subtractLists knownGroups groups;
-          in
-          {
-            assertion = (cfg.enableServer && cfg.provision.enable) -> unknownGroups == [ ];
-            message = "${opt} refers to unknown groups: ${toString unknownGroups}";
-          };
-
         assertEntitiesKnown =
           opt: entities:
           let
@@ -736,10 +725,6 @@ in
           }
         )
       ]
-      ++ flip mapAttrsToList (filterPresent cfg.provision.persons) (
-        person: personCfg:
-        assertGroupsKnown "services.kanidm.provision.persons.${person}.groups" personCfg.groups
-      )
       ++ flip mapAttrsToList (filterPresent cfg.provision.groups) (
         group: groupCfg:
         assertEntitiesKnown "services.kanidm.provision.groups.${group}.members" groupCfg.members
@@ -747,20 +732,9 @@ in
       ++ concatLists (
         flip mapAttrsToList (filterPresent cfg.provision.systems.oauth2) (
           oauth2: oauth2Cfg:
-          [
-            (assertGroupsKnown "services.kanidm.provision.systems.oauth2.${oauth2}.scopeMaps" (
-              attrNames oauth2Cfg.scopeMaps
-            ))
-            (assertGroupsKnown "services.kanidm.provision.systems.oauth2.${oauth2}.supplementaryScopeMaps" (
-              attrNames oauth2Cfg.supplementaryScopeMaps
-            ))
-          ]
-          ++ concatLists (
+          concatLists (
             flip mapAttrsToList oauth2Cfg.claimMaps (
               claim: claimCfg: [
-                (assertGroupsKnown "services.kanidm.provision.systems.oauth2.${oauth2}.claimMaps.${claim}.valuesByGroup" (
-                  attrNames claimCfg.valuesByGroup
-                ))
                 # At least one group must map to a value in each claim map
                 {
                   assertion =
