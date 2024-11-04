@@ -41,7 +41,7 @@ let
   cfg = config.services.kanidm;
   settingsFormat = pkgs.formats.toml { };
   # Remove null values, so we can document optional values that don't end up in the generated TOML file.
-  filterConfig = converge (a: filterAttrsRecursive (_: v: v != null) (builtins.removeAttrs a [ "provision" ]));
+  filterConfig = converge (a: filterAttrsRecursive (_: v: v != null && v != []) (builtins.removeAttrs a [ "provision" ]));
   serverConfigFile = settingsFormat.generate "server.toml" (filterConfig cfg.serverSettings);
   clientConfigFile = settingsFormat.generate "kanidm-config.toml" (filterConfig cfg.clientSettings);
   unixConfigFile = settingsFormat.generate "kanidm-unixd.toml" (filterConfig cfg.unixSettings);
