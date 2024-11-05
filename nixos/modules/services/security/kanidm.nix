@@ -126,8 +126,14 @@ let
 
   filterPresent = filterAttrs (_: v: v.present);
 
+  isGroupEmpty = g: ! g ? members || g ? members && g.members == [ ];
+
   provisionStateJson = pkgs.writeText "provision-state.json" (
-    builtins.toJSON { inherit (cfg.provision) groups persons systems; }
+    builtins.toJSON {
+      inherit (cfg.provision) persons systems;
+      groups =
+        lib.attrsets.filterAttrs (_n: v: ! isGroupEmpty v) cfg.provision.groups;
+    }
   );
 
   # Only recover the admin account if a password should explicitly be provisioned
@@ -169,6 +175,19 @@ let
         fi
       '';
 
+  emptyGroupsNames =
+    builtins.attrNames
+      (lib.attrsets.filterAttrs (_n: v: isGroupEmpty v) cfg.provision.groups);
+
+  createEmptyGroups = ''
+    mkdir -p ~/.cache
+    KANIDM_PASSWORD="$KANIDM_IDM_ADMIN_PASSWORD" KANIDM_TOKEN_CACHE_PATH=/.cache ${cfg.package}/bin/kanidm login --name idm_admin --url "${cfg.provision.instanceUrl}" --skip-hostname-verification
+    for group_name in ${lib.strings.concatLines emptyGroupsNames}
+    do
+        KANIDM_TOKEN_CACHE_PATH=/.cache ${cfg.package}/bin/kanidm group create "$group_name" --name idm_admin --url "${cfg.provision.instanceUrl}" --skip-hostname-verification
+    done
+  '';
+
   postStartScript = pkgs.writeShellScript "post-start" ''
     set -euo pipefail
 
@@ -188,6 +207,7 @@ let
 
     ${recoverIdmAdmin}
     ${maybeRecoverAdmin}
+    ${createEmptyGroups}
 
     KANIDM_PROVISION_IDM_ADMIN_TOKEN=$KANIDM_IDM_ADMIN_PASSWORD \
       ${getExe pkgs.kanidm-provision} \
@@ -843,7 +863,7 @@ in
             "AF_INET6"
             "AF_UNIX"
           ];
-          TemporaryFileSystem = "/:ro";
+          #TemporaryFileSystem = "/:ro";
         }
       ];
       environment.RUST_LOG = "info";
