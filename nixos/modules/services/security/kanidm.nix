@@ -180,12 +180,14 @@ let
       (lib.attrsets.filterAttrs (_n: v: isGroupEmpty v) cfg.provision.groups);
 
   createEmptyGroups = ''
-    mkdir -p ~/.cache
-    KANIDM_PASSWORD="$KANIDM_IDM_ADMIN_PASSWORD" KANIDM_TOKEN_CACHE_PATH=/.cache ${cfg.package}/bin/kanidm login --name idm_admin --url "${cfg.provision.instanceUrl}" --skip-hostname-verification
+    readonly CLIENT_HOME=$STATE_DIRECTORY/client_home
+    mkdir -p $CLIENT_HOME
+    HOME=$CLIENT_HOME KANIDM_PASSWORD="$KANIDM_IDM_ADMIN_PASSWORD" ${cfg.package}/bin/kanidm login --name idm_admin --url "${cfg.provision.instanceUrl}" --skip-hostname-verification
     for group_name in ${lib.strings.concatLines emptyGroupsNames}
     do
-        KANIDM_TOKEN_CACHE_PATH=/.cache ${cfg.package}/bin/kanidm group create "$group_name" --name idm_admin --url "${cfg.provision.instanceUrl}" --skip-hostname-verification
+        HOME=$CLIENT_HOME ${cfg.package}/bin/kanidm group create "$group_name" --name idm_admin --url "${cfg.provision.instanceUrl}" --skip-hostname-verification
     done
+    rm -r $CLIENT_HOME
   '';
 
   postStartScript = pkgs.writeShellScript "post-start" ''
